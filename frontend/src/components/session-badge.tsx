@@ -12,46 +12,34 @@ function formatMMSS(totalSeconds: number) {
 
 export default function SessionBadge() {
     const router = useRouter();
-    const [remaining, setRemaining] = useState<number>(0);
+    const [mounted, setMounted] = useState(false);
+    const [remaining, setRemaining] = useState(0);
+
+    useEffect(() => setMounted(true), []);
 
     useEffect(() => {
-        const tick = () => setRemaining(getRemainingSeconds());
+        if (!mounted) return;
+
+        const tick = () => {
+            const secs = getRemainingSeconds();
+            setRemaining(secs);
+
+            if (!isSessionActive() || secs <= 0) {
+                clearSession();
+                router.replace("/");
+            }
+        };
+
         tick();
         const id = setInterval(tick, 1000);
         return () => clearInterval(id);
-    }, []);
+    }, [mounted, router]);
 
-    const active = isSessionActive();
-
-    const goLogin = () => {
-        clearSession();
-        router.push("/");
-    };
+    if (!mounted) return null;
 
     return (
-        <div className="flex items-center gap-3 text-sm">
-            {active ? (
-                <>
-          <span className="px-3 py-1 rounded-full border">
-            Sesión activa
-          </span>
-                    <span className="px-3 py-1 rounded-full border">
-            Expira en {formatMMSS(remaining)}
-          </span>
-                </>
-            ) : (
-                <>
-          <span className="px-3 py-1 rounded-full border">
-            Sesión expirada
-          </span>
-                    <button
-                        onClick={goLogin}
-                        className="px-3 py-1 rounded-full bg-black text-white"
-                    >
-                        Ir a login
-                    </button>
-                </>
-            )}
+        <div className="text-sm">
+            Sesión activa · expira en <b>{formatMMSS(remaining)}</b>
         </div>
     );
 }

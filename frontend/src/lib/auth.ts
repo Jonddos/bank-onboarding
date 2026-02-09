@@ -1,37 +1,66 @@
-export const TOKEN_KEY = "guardian_token";
-export const EXP_KEY = "guardian_exp"; // timestamp ms
+const TOKEN_KEY = "bo_token";
+const EXPIRES_AT_KEY = "bo_expires_at";
 
 export function setSession(token: string, expiresInSeconds: number) {
-    if (typeof window === "undefined") return;
+    const expiresAt = Date.now() + expiresInSeconds * 1000;
     localStorage.setItem(TOKEN_KEY, token);
-    const exp = Date.now() + expiresInSeconds * 1000;
-    localStorage.setItem(EXP_KEY, String(exp));
+    localStorage.setItem(EXPIRES_AT_KEY, String(expiresAt));
+
+    window.dispatchEvent(new Event("session-changed"));
 }
 
-export function getToken(): string | null {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem(TOKEN_KEY);
+export function getExpiresAt(): number | null {
+    const raw = localStorage.getItem(EXPIRES_AT_KEY);
+    if (!raw) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
 }
 
-export function getExp(): number | null {
+export function isExpired() {
+    const expiresAt = getExpiresAt();
+    if (!expiresAt) return true;
+    return Date.now() >= expiresAt;
+}
+
+function storage() {
     if (typeof window === "undefined") return null;
-    const v = localStorage.getItem(EXP_KEY);
-    return v ? Number(v) : null;
+    return window.localStorage;
+}
+
+export function getToken() {
+    return storage()?.getItem(TOKEN_KEY) ?? null;
 }
 
 export function clearSession() {
-    if (typeof window === "undefined") return;
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(EXP_KEY);
+    const s = storage();
+    if (!s) return;
+    s.removeItem(TOKEN_KEY);
+    s.removeItem(EXPIRES_AT_KEY);
 }
 
-export function getRemainingSeconds(): number {
-    const exp = getExp();
-    if (!exp) return 0;
-    const diff = Math.floor((exp - Date.now()) / 1000);
-    return Math.max(0, diff);
+export function isSessionActive() {
+    const s = storage();
+    if (!s) return false;
+
+    const token = s.getItem(TOKEN_KEY);
+    const expiresAtRaw = s.getItem(EXPIRES_AT_KEY);
+    if (!token || !expiresAtRaw) return false;
+
+    const expiresAt = Number(expiresAtRaw);
+    if (!Number.isFinite(expiresAt)) return false;
+
+    return Date.now() < expiresAt;
 }
 
-export function isSessionActive(): boolean {
-    return !!getToken() && getRemainingSeconds() > 0;
+export function getRemainingSeconds() {
+    const s = storage();
+    if (!s) return 0;
+
+    const expiresAtRaw = s.getItem(EXPIRES_AT_KEY);
+    if (!expiresAtRaw) return 0;
+
+    const expiresAt = Number(expiresAtRaw);
+    if (!Number.isFinite(expiresAt)) return 0;
+
+    return Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
 }

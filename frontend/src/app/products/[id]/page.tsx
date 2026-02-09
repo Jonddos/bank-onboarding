@@ -103,7 +103,7 @@ export default function ProductDetail({ params }: PageProps) {
     }, [item]);
 
     const goOnboarding = () => {
-        router.push(`/onboarding?productId=${encodeURIComponent(params.id)}`);
+        router.push(`/onboarding?productId=${encodeURIComponent(id)}`);
     };
 
     return (
