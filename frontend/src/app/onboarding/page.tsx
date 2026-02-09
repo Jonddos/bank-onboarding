@@ -62,36 +62,36 @@ export default function OnboardingPage() {
 
             <form onSubmit={onSubmit} className="mt-6 space-y-3 rounded-2xl border p-5">
                 <div>
-                    <label className="text-sm font-medium">Nombre completo</label>
+                    <label className="ui-label">Nombre completo</label>
                     <input
-                        className="mt-1 w-full rounded-xl border p-2"
+                        className="ui-input"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                     />
                 </div>
 
                 <div>
-                    <label className="text-sm font-medium">Documento</label>
+                    <label className="ui-label">Documento</label>
                     <input
-                        className="mt-1 w-full rounded-xl border p-2"
+                        className="ui-input"
                         value={documentNumber}
                         onChange={(e) => setDocumentNumber(e.target.value)}
                     />
                 </div>
 
                 <div>
-                    <label className="text-sm font-medium">Email</label>
+                    <label className="ui-label">Email</label>
                     <input
-                        className="mt-1 w-full rounded-xl border p-2"
+                        className="ui-input"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
 
                 <div>
-                    <label className="text-sm font-medium">Monto inicial</label>
+                    <label className="ui-label">Monto inicial</label>
                     <input
-                        className="mt-1 w-full rounded-xl border p-2"
+                        className="ui-input"
                         type="number"
                         value={initialAmount}
                         onChange={(e) => setInitialAmount(Number(e.target.value))}
@@ -113,7 +113,7 @@ export default function OnboardingPage() {
 
                 <button
                     disabled={loading}
-                    className="w-full rounded-xl bg-black text-white p-2 disabled:opacity-60"
+                    className="ui-btn ui-btn-primary"
                 >
                     {loading ? "Enviando..." : "Crear onboarding"}
                 </button>

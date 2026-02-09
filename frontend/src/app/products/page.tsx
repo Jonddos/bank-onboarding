@@ -39,10 +39,10 @@ export default function ProductsPage() {
                 <div className="flex items-center gap-3">
                     <SessionBadge />
                     <div className="flex gap-2">
-                        <Link className="rounded-xl border px-3 py-2" href="/onboarding">
+                        <Link className="ui-btn ui-btn-outline" href="/onboarding">
                             Crear onboarding
                         </Link>
-                        <button className="rounded-xl bg-black text-white px-3 py-2" onClick={logout}>
+                        <button className="ui-btn ui-btn-primary" onClick={logout}>
                             Salir
                         </button>
                     </div>
@@ -60,7 +60,7 @@ export default function ProductsPage() {
                 {items.map((p) => {
                     console.log({p})
                     return (
-                        <li key={p.id} className="rounded-2xl border p-4">
+                        <li key={p.id} className="ui-card p-4">
                             <div className="flex items-start justify-between gap-3">
                                 <div>
                                     <div className="font-semibold">{p.name}</div>
@@ -72,7 +72,7 @@ export default function ProductsPage() {
                                 </div>
                                 <Link
                                     href={`/products/${p.id}`}
-                                    className="text-sm rounded-xl border px-3 py-2"
+                                    className="ui-btn ui-btn-outline"
                                 >
                                     Ver
                                 </Link>
